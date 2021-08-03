@@ -6,27 +6,31 @@
 */
 
 version 1.0;
-
 ns junos = "http://xml.juniper.net/junos/*/junos";
 ns xnm = "http://xml.juniper.net/xnm/1.1/xnm";
 ns jcs = "http://xml.juniper.net/junos/commit-scripts/1.0";
+ns ext = "http://xmlsoft.org/XSLT/namespace";
 
 import "../import/junos.xsl";
 
 match / {
     <op-script-results> {
         var $output-format = "%0s";
-
-        /* Get a list of all peers */
         var $show-bgp-group-summary = {
             <command> "show bgp group summary";
         }
-        var $peer-list = jcs:invoke( $show-bgp-group-summary );
+        var $peer = jcs:invoke( $show-bgp-group-summary );
         /* Loop through each peer results summing prefix types */
-        for-each ($peer-list/bgp-group) {
+        for-each ($peer/bgp-group) {
             <output> jcs:printf($output-format,
-                peer-count,
+                established-count,
                 description);
         }
+        var $mibset-fd = <request-snmp-utility-mib-set> {
+            <object-type> "counter64";
+            <instance> "established-count";
+            <object-value> $show-bgp-group-summary;
+        }
+        var $stdout=jcs:invoke($mibset-fd);
     }
 }
