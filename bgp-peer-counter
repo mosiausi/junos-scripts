@@ -15,15 +15,13 @@ import "../import/junos.xsl";
 
 match / {
     <op-script-results> {
-        var $output-format = "%0s";
         var $show-bgp-group-summary = {
             <command> "show bgp group summary";
         }
         var $peer = jcs:invoke( $show-bgp-group-summary );
         /* Loop through each peer results summing prefix types */
         for-each ($peer/bgp-group) {
-            <output> jcs:printf($output-format,
-                established-count,
+            <output> jcs:printf(established-count,
                 description);
         }
         var $mibset-fd = <request-snmp-utility-mib-set> {
