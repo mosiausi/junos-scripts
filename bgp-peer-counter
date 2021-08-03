@@ -1,0 +1,32 @@
+/* bgp-peer.slax
+ * Aug 3 2021
+ * Version 0.1
+ * Moshiko Nayman - mosiausi@gmail.com
+ * BGP establish peer counter to monitor the BGP peer scale
+*/
+
+version 1.0;
+
+ns junos = "http://xml.juniper.net/junos/*/junos";
+ns xnm = "http://xml.juniper.net/xnm/1.1/xnm";
+ns jcs = "http://xml.juniper.net/junos/commit-scripts/1.0";
+
+import "../import/junos.xsl";
+
+match / {
+    <op-script-results> {
+        var $output-format = "%0s";
+
+        /* Get a list of all peers */
+        var $show-bgp-group-summary = {
+            <command> "show bgp group summary";
+        }
+        var $peer-list = jcs:invoke( $show-bgp-group-summary );
+        /* Loop through each peer results summing prefix types */
+        for-each ($peer-list/bgp-group) {
+            <output> jcs:printf($output-format,
+                peer-count,
+                description);
+        }
+    }
+}
