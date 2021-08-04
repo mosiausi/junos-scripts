@@ -29,9 +29,12 @@ match / {
 }
 
 /* set event-options generate-event 1-min time-interval 60
-   set event-options policy jnxBGPeer-Util events 1-min
-   set event-options policy jnxBGPeer-Util then event-script bgp-peer-count.slax
-   set event-options event-script file bgp-peer-count.slax
-
-   set system scripts op file bgp-peer-count.slax
-*/
+ * set event-options policy jnxBGPeer-Util events 1-min
+ * set event-options policy jnxBGPeer-Util then event-script bgp-peer-count.slax
+ * set event-options event-script file bgp-peer-count.slax
+ * 
+ * set system scripts op file bgp-peer-count.slax
+ * 
+ * jcluser@vMX2# run show snmp mib walk jnxUtil ascii 
+ * jnxUtilCounter64Value."established-peers" = 1024
+ */
