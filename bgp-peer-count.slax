@@ -1,0 +1,37 @@
+/* bgp-peer-count.slax
+ * Aug 4 2021
+ * Version 1.0
+ * Moshiko Nayman - mosiausi@gmail.com
+ * BGP establish peer counter to monitor the BGP peer scale
+*/
+
+version 1.0;
+ns junos = "http://xml.juniper.net/junos/*/junos";
+ns xnm = "http://xml.juniper.net/xnm/1.1/xnm";
+ns jcs = "http://xml.juniper.net/junos/commit-scripts/1.0";
+ns ext = "http://xmlsoft.org/XSLT/namespace";
+
+import "../import/junos.xsl";
+
+match / {
+    <op-script-results> {
+        var $bgp-group-info = jcs:invoke( "get-bgp-group-information" );
+        var $peer-count = $bgp-group-info/bgp-information/peer-count;
+        <output> jcs:printf("total peers : %i", $peer-count);
+
+        var $mibset-fd = <request-snmp-utility-mib-set> {
+            <object-type> "counter64";
+            <instance> "established-peers";
+            <object-value> $peer-count;
+        }
+        var $stdout=jcs:invoke($mibset-fd);
+    }
+}
+
+/* set event-options generate-event 1-min time-interval 60
+   set event-options policy jnxBGPeer-Util events 1-min
+   set event-options policy jnxBGPeer-Util then event-script bgp-peer-count.slax
+   set event-options event-script file bgp-peer-count.slax
+
+   set system scripts op file bgp-peer-count.slax
+*/
