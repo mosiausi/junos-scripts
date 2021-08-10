@@ -30,6 +30,6 @@ if __name__ == '__main__':
     main()
 
 # set event-options generate-event 1-MIN time-interval 60
-# set event-options policy BGP-PEER-COUNT events 1-MIN
-# set event-options policy BGP-PEER-COUNT then event-script bgp-peer-count.py
-# set event-options event-script file bgp-peer-count.py
+# set event-options policy BGP-GROUP-PEER-COUNT events 1-MIN
+# set event-options policy BGP-GROUP-PEER-COUNT then event-script bgp-group-peer-count.py
+# set event-options event-script file bgp-group-peer-count.py
